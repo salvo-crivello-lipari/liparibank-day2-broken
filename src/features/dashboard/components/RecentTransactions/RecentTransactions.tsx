@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import styles from './RecentTransactions.module.css';
 
 interface Transaction {
@@ -75,4 +75,4 @@ const RecentTransactions = () => {
 	);
 };
 
-export default RecentTransactions;
+export default memo(RecentTransactions);
