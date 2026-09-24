@@ -1,0 +1,126 @@
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.accountNumber {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: monospace;
+}
+
+.balanceSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1rem;
+}
+
+.balanceLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.balanceValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.operations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pendingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.pendingLabel {
+  color: var(--color-text-muted);
+}
+
+.pendingCount {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.pendingCount.active {
+  color: var(--color-primary);
+}
+
+.buttonRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.opButton {
+  padding: 0.4rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--color-primary);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transition: background-color 0.15s;
+}
+
+.opButton:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.opButtonSecondary {
+  background-color: transparent;
+  color: var(--color-primary);
+}
+
+.opButtonSecondary:hover {
+  background-color: #eff6ff;
+}
+
+.resetButton {
+  padding: 0.4rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background-color: transparent;
+  color: var(--color-text-muted);
+  transition: background-color 0.15s;
+}
+
+.resetButton:hover {
+  background-color: var(--color-bg);
+}
