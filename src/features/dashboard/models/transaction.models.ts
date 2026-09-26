@@ -6,4 +6,4 @@ export interface Transaction {
 	type: 'credit' | 'debit';
 }
 
-export type TOperation = Omit<Transaction, 'description'>;
+export type TOperation = Omit<Transaction, 'description'> & { description?: string };
