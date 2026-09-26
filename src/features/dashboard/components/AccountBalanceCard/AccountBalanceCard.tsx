@@ -1,50 +1,99 @@
-import { useOperationCounter } from '../../hooks/useOperationCounter';
+import { useState } from 'react';
 import styles from './AccountBalanceCard.module.css';
+import { TAccount } from '../../models/account.models';
+import { formatCurrency } from '../../utils';
 
 interface AccountBalanceCardProps {
-	balance: number;
+	account: TAccount;
+	onViewTransactions: (accountId: string) => void;
+	onRefreshBalance: (accountId: string) => Promise<void>;
 }
 
-const currencyFormatter = new Intl.NumberFormat('it-IT', {
-	style: 'currency',
-	currency: 'EUR',
-});
+const AccountBalanceCard = ({ account, onViewTransactions, onRefreshBalance }: AccountBalanceCardProps) => {
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-const formatCurrency = (value: number) => currencyFormatter.format(value);
+	const handleRefresh = async () => {
+		if (loading) return;
 
-const AccountBalanceCard = ({ balance }: AccountBalanceCardProps) => {
-	const { count, increment, decrement, reset } = useOperationCounter();
+		setLoading(true);
+		setError(null);
+
+		try {
+			await onRefreshBalance(account.id);
+		} catch {
+			setError('Impossibile aggiornare il saldo. Riprova.');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleViewTransactions = () => {
+		onViewTransactions(account.id);
+	};
 
 	return (
-		<div className={styles.card}>
-			<div className={styles.header}>
-				<h3 className={styles.title}>Conto Corrente</h3>
-				<span className={styles.accountNumber}>IT60 X054 2811 1010 0000 0123 456</span>
-			</div>
+		<article className={styles.card} aria-label={`Conto ${account.name}`} aria-busy={loading}>
+			<header className={styles.header}>
+				<div className={styles.accountInfo}>
+					<h3 className={styles.title}>{account.name}</h3>
+
+					<span className={`${styles.badge} ${account.type === 'PRIVATE' ? styles.private : styles.business}`}>
+						{account.type === 'PRIVATE' ? 'Privato' : 'Business'}
+					</span>
+				</div>
+
+				<span className={styles.accountId}>Conto n. {account.id}</span>
+			</header>
 
 			<div className={styles.balanceSection}>
 				<span className={styles.balanceLabel}>Saldo disponibile</span>
-				<span className={styles.balanceValue}>{formatCurrency(balance)}</span>
+
+				<p className={styles.balanceValue} aria-label={`Saldo disponibile: ${formatCurrency(account.balance)}`}>
+					{formatCurrency(account.balance)}
+				</p>
+
+				<span className={styles.iban}>IBAN: {account.iban}</span>
 			</div>
 
-			<div className={styles.operations}>
-				<div className={styles.pendingRow}>
-					<span className={styles.pendingLabel}>Operazioni in sospeso:</span>
-					<span className={`${styles.pendingCount} ${count > 0 ? styles.active : ''}`}>{count}</span>
-				</div>
-				<div className={styles.buttonRow}>
-					<button className={styles.opButton} onClick={increment}>
-						+ Aggiungi operazione
-					</button>
-					<button className={`${styles.opButton} ${styles.opButtonSecondary}`} onClick={decrement}>
-						− Rimuovi operazione
-					</button>
-					<button className={styles.resetButton} onClick={reset}>
-						Reset
-					</button>
-				</div>
+			<div className={styles.actions}>
+				<button
+					type="button"
+					className={styles.refreshButton}
+					onClick={handleRefresh}
+					disabled={loading}
+					aria-label={`Aggiorna il saldo del conto ${account.name}`}
+				>
+					{loading ? (
+						<>
+							<span className={styles.spinner} aria-hidden="true" />
+							Aggiornamento...
+						</>
+					) : (
+						<>
+							<span aria-hidden="true">↻</span>
+							Aggiorna saldo
+						</>
+					)}
+				</button>
+
+				<button
+					type="button"
+					className={styles.transactionsButton}
+					onClick={handleViewTransactions}
+					aria-label={`Visualizza i movimenti del conto ${account.name}`}
+				>
+					Visualizza movimenti
+					<span aria-hidden="true"> →</span>
+				</button>
 			</div>
-		</div>
+
+			{error && (
+				<p className={styles.error} role="alert">
+					{error}
+				</p>
+			)}
+		</article>
 	);
 };
 

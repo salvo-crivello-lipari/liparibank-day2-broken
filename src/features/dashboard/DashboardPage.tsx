@@ -1,38 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AccountBalanceCard from './components/AccountBalanceCard/AccountBalanceCard';
 import RecentTransactions from './components/RecentTransactions/RecentTransactions';
 import styles from './DashboardPage.module.css';
 import OperationHistory from './components/OperationHistory/OperationHistory';
 import useFetchOperation from './hooks/useTransactionOperation';
+import { TAccount } from './models/account.models';
+import { mockAccount } from './constants/constant';
 
 const DashboardPage = () => {
-	const [balance, setBalance] = useState(4250.0);
 	const { addOperation, operations, loading } = useFetchOperation();
+	const [account, setAccount] = useState<TAccount>(mockAccount);
 
-	useEffect(() => {
-		const interval = setInterval(() => {
-			const delta = Math.random() * 200 - 100;
-			setBalance((prev) => {
-				return Math.round((prev + delta) * 100) / 100;
-			});
+	const refreshBalance = async (accountId: string) => {
+		console.log('Aggiornamento conto:', accountId);
+		await new Promise((resolve) => setTimeout(resolve, 1500));
 
-			const type = delta >= 0 ? 'credit' : 'debit';
-			const amount = Math.abs(delta);
-			addOperation(type, amount);
-		}, 3000);
+		const delta = Math.random() * 200 - 100;
+		setAccount((prev) => ({
+			...prev,
+			balance: Math.round((prev.balance + delta) * 100) / 100,
+		}));
+		const type = delta >= 0 ? 'credit' : 'debit';
+		const amount = Math.abs(delta);
+		addOperation(type, amount);
+	};
 
-		return () => clearInterval(interval);
-	}, [addOperation]);
+	const viewTransactions = (accountId: string) => {
+		console.log('Visualizza movimenti:', accountId);
+	};
 
 	const deposit = () => {
 		const amount = 100;
 		addOperation('credit', amount);
-		setBalance((prev) => prev + amount);
+		setAccount((prev) => ({
+			...prev,
+			balance: prev.balance + amount,
+		}));
 	};
+
 	const withdraw = () => {
 		const amount = 100;
 		addOperation('debit', amount);
-		setBalance((prev) => prev - amount);
+		setAccount((prev) => ({
+			...prev,
+			balance: prev.balance - amount,
+		}));
 	};
 
 	return (
@@ -51,7 +63,7 @@ const DashboardPage = () => {
 			</div>
 
 			<div className={styles.grid}>
-				<AccountBalanceCard balance={balance} />
+				<AccountBalanceCard account={account} onRefreshBalance={refreshBalance} onViewTransactions={viewTransactions} />
 				<RecentTransactions />
 				<OperationHistory operations={operations} loading={loading} />
 			</div>
