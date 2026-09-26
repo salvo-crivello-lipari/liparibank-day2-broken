@@ -1,21 +1,8 @@
 import { useState, useEffect, memo } from 'react';
 import styles from './RecentTransactions.module.css';
-
-interface Transaction {
-	id: string;
-	description: string;
-	amount: number;
-	date: string;
-	type: 'credit' | 'debit';
-}
-
-const mockTransactions: Transaction[] = [
-	{ id: 'tx-001', description: 'Stipendio Novembre', amount: 2400.0, date: '2024-11-30', type: 'credit' },
-	{ id: 'tx-002', description: 'Affitto Dicembre', amount: -850.0, date: '2024-12-01', type: 'debit' },
-	{ id: 'tx-003', description: 'Supermercato Conad', amount: -67.4, date: '2024-12-03', type: 'debit' },
-	{ id: 'tx-004', description: 'Rimborso spese aziendali', amount: 320.0, date: '2024-12-05', type: 'credit' },
-	{ id: 'tx-005', description: 'Bolletta Enel', amount: -112.8, date: '2024-12-07', type: 'debit' },
-];
+import { Transaction } from '../../models/transaction.models';
+import { mockTransactions } from '../../constants/constant';
+import { formatAmount, formatDate } from '../../utils';
 
 const RecentTransactions = () => {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -30,16 +17,6 @@ const RecentTransactions = () => {
 
 		return () => clearTimeout(timer);
 	}, []);
-
-	const formatDate = (dateStr: string) =>
-		new Date(dateStr).toLocaleDateString('it-IT', {
-			day: '2-digit',
-			month: 'short',
-			year: 'numeric',
-		});
-
-	const formatAmount = (amount: number) =>
-		new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Math.abs(amount));
 
 	if (loading) {
 		return (
